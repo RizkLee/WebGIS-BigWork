@@ -102,9 +102,13 @@ npx wrangler pages deploy dist --project-name=hnnu-welcome
 ## 步骤4: 更新Worker的CORS配置
 
 1. 编辑 `worker/wrangler.jsonc`,添加Pages域名到允许的源:
-```toml
-[vars]
-ALLOWED_ORIGINS = "http://localhost:5173,https://hnnu-welcome.pages.dev,https://你的自定义域名.com"
+```jsonc
+{
+  // ...其他配置
+  "vars": {
+    "ALLOWED_ORIGINS": "http://localhost:5173,https://hnnu-welcome.pages.dev,https://你的自定义域名.com"
+  }
+}
 ```
 
 2. 重新部署Worker:
@@ -151,7 +155,7 @@ wrangler deploy
    npx wrangler pages deploy dist --project-name=hnnu-welcome
    ```
 
-项目根目录的 `wrangler.toml` 文件已配置好兼容性日期，但主要用于说明配置。Cloudflare Pages 部署建议使用控制台或 `wrangler pages deploy` 命令。
+项目根目录的 `wrangler.toml` 文件提供了必要的配置（包括 `compatibility_date`），使 CLI 部署时能够正常工作。如果使用 Cloudflare Pages 控制台部署，则不需要此文件。
 
 ### 构建失败
 
