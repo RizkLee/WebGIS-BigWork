@@ -72,17 +72,18 @@ git push
 5. 选择你的项目仓库 `HNNU_Welcome`
 
 6. 配置构建设置:
-   - **项目名称**: `hnnu-webgis` (或你喜欢的名称)
+   - **项目名称**: `hnnu-welcome` (或你喜欢的名称)
    - **生产分支**: `main`
    - **框架预设**: `Vite`
    - **构建命令**: `npm run build`
    - **构建输出目录**: `dist`
+   - **部署命令**: 留空（不要填写 `npx wrangler deploy --assets=./dist`）
 
 7. 点击 **Save and Deploy**
 
 8. 等待构建完成 (通常需要1-3分钟)
 
-9. 部署完成后,你会得到一个URL: `https://hnnu-webgis.pages.dev`
+9. 部署完成后,你会得到一个URL: `https://hnnu-welcome.pages.dev`
 
 ### 方法2: 使用Wrangler CLI
 
@@ -91,17 +92,19 @@ git push
 npm run build
 ```
 
-2. 部署到Pages:
+2. 部署到Pages (使用 pages 子命令):
 ```bash
-wrangler pages deploy dist --project-name=hnnu-webgis
+npx wrangler pages deploy dist --project-name=hnnu-welcome
 ```
+
+**注意**: 请使用 `wrangler pages deploy` 而不是 `wrangler deploy --assets`。前者是专门用于 Cloudflare Pages 的命令。
 
 ## 步骤4: 更新Worker的CORS配置
 
-1. 编辑 `worker/wrangler.toml`,添加Pages域名到允许的源:
+1. 编辑 `worker/wrangler.jsonc`,添加Pages域名到允许的源:
 ```toml
 [vars]
-ALLOWED_ORIGINS = "http://localhost:5173,https://hnnu-webgis.pages.dev,https://你的自定义域名.com"
+ALLOWED_ORIGINS = "http://localhost:5173,https://hnnu-welcome.pages.dev,https://你的自定义域名.com"
 ```
 
 2. 重新部署Worker:
@@ -133,6 +136,22 @@ wrangler deploy
    - POI评论和评分
 
 ## 常见问题
+
+### 使用 `npx wrangler deploy --assets=./dist` 命令失败
+
+**错误信息**: `A compatibility_date is required when publishing`
+
+**原因**: `wrangler deploy --assets` 是用于部署 Workers with Assets 的命令，不是用于 Cloudflare Pages 的正确命令。
+
+**解决方案**: 
+1. **推荐方式**: 使用 Cloudflare Pages 控制台连接 GitHub 仓库（见方法1）
+2. **CLI方式**: 使用 `wrangler pages deploy` 命令:
+   ```bash
+   npm run build
+   npx wrangler pages deploy dist --project-name=hnnu-welcome
+   ```
+
+项目根目录的 `wrangler.toml` 文件已配置好兼容性日期，但主要用于说明配置。Cloudflare Pages 部署建议使用控制台或 `wrangler pages deploy` 命令。
 
 ### 构建失败
 

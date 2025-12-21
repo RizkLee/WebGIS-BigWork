@@ -1,0 +1,11 @@
+# Cloudflare Pages Configuration
+# This configuration is for deploying the frontend static site to Cloudflare Pages
+
+name = "hnnu-welcome"
+compatibility_date = "2025-12-21"
+
+# Pages configuration
+pages_build_output_dir = "dist"
+
+[site]
+bucket = "./dist"
