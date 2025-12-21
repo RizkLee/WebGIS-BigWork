@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="72001">
+    <base target="_blank">
+    <link rel="shortcut icon" href="Pictures/logo.png">
+    <link rel="stylesheet" href="style.css">
+    <title>Welcome to HNNU</title>
+    <style>
+        .title1 {
+            text-align: center;
+            font-size: 24px;
+            font-family: 'Source Han Serif CN', serif;
+            font-weight: 600;
+            color: #8F0100;
+            margin-bottom: 30px;
+        }
+
+        .main-title {
+            width: 800px;
+            max-width: 90%;
+        }
+        
+        .center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .item-title {
+            font-family: 'Microsoft YaHei', sans-serif;
+            font-size: 16px;
+            color: #333;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .item-title::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .item-title.active::before {
+            transform: rotate(90deg);
+        }
+
+        .link-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            background-color: white;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .link-button:hover {
+            background-color: #f5f5f5;
+        }
+    </style>
+    <script>
+        // 添加这个函数, 用于浮出层的显示和隐藏
+        function toggleQRCode(event, buttonId) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const allPopups = document.querySelectorAll('.qr-popup');
+            allPopups.forEach(popup => {
+                if (popup.id !== `qr-popup-${buttonId}`) {
+                    popup.classList.remove('active');
+                }
+            });
+
+            const popup = document.getElementById(`qr-popup-${buttonId}`);
+            popup.classList.toggle('active');
+        }
+
+        // 点击其他地方关闭二维码
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.qr-button')) {
+                document.querySelectorAll('.qr-popup').forEach(popup => {
+                    popup.classList.remove('active');
+                });
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <br><br><br>
+    <a class="center" href="https://www.hunnu.edu.cn/" target="_blank" title="Hunan Normal University Offical Website 湖南师范大学官方网站" accesskey="h" rel="noopener">
+        <img src="https://pan.hunnu.edu.cn/media/custom/mylogo.png" alt="HNNU Logo" width="407.11" height="90" class="center">
+    </a><br><br>
+
+    <h1 class="title1">欢迎来到湖南师范大学！访问学校官网请点击校徽</h1>
+    <h1 class="title1" style="font-size: 16px;">Welcome to Hunan Normal University! <br>Click the logo to visit the official website</h1>
+
+    <h2 class="main-title">本科生校园指南</h2>
+
+    <!-- 学校实用官网 -->
+    <div class="section">
+        <h2 class="section-title">实用官网官微</h2>
+        <div class="item-row">
+            <div class="item-header">
+                <div class="item-title">校园网登录页</div>
+                <div class="item-links">
+                    <a href="http://192.168.250.250/" class="link-button">登陆网址</a>
+                </div>
+            </div>
+            <div class="item-description">
+                若您在校园内，可通过校园网登录页访问校园网，点此查看<a href="https://io.hunnu.edu.cn/info/1036/2308.htm" target="_blank">校园网使用常见问题</a>。
+            </div>
+        </div>
+        <div class="item-row">
+            <div class="item-header">
+                <div class="item-title">图书馆</div>
+                <div class="item-links">
+                    <a href="https://lib.hunnu.edu.cn/" class="link-button">官网</a>
+                    <a href="https://surl.amap.com/m9PeRjPhd69" class="link-button">位置</a>
+                </div>
+            </div>
+            <div class="item-description">
+                图书馆是学校的文献信息中心，提供丰富的图书、期刊、数字资源等，支持师生的教学和科研活动。
+            </div>
+        </div>
+        <div class="item-row">
+            <div class="item-header">
+                <div class="item-title">科技处</div>
+                <div class="item-links">
+                    <a href="http://hunnu.ticeyun.com/" class="link-button">体测官网</a>
+                    <div class="qr-button" onclick="toggleQRCode(event, 'kjc')">
+                        官微
+                        <div class="qr-popup" id="qr-popup-kjc">
+                            <img src="Pictures/sports_commitee.jpg" alt="科技处公众号二维码">
+                            <div class="qr-popup-text">微信扫码关注公众号</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="item-description">
+                科技处是学校的科研、竞赛管理部门，负责科研项目管理、科研成果评审等工作，可于科技处官网查询科研动态、竞赛信息等。
+            </div>
+        </div>
+        <div class="item-row">
+            <div class="item-header">
+                <div class="item-title">体育运动委员会</div>
+                <div class="item-links">
+                    <div class="qr-button" onclick="toggleQRCode(event, 'sports')">
+                        官微
+                        <div class="qr-popup" id="qr-popup-sports">
+                            <img src="Pictures/sports_commitee.jpg" alt="体育运动委员会公众号二维码">
+                            <div class="qr-popup-text">微信扫码关注公众号</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="item-description">
+                体育运动委员会是学校的体育管理部门，负责学校体育活动和体测的组织和管理，可于体育运动委员会官微查询体测通知。
+            </div>
+        </div>
+        <div class="item-row">
+            <div class="item-header">
+                <div class="item-title">校园云盘</div>
+                <div class="item-links">
+                    <a href="https://pan.hunnu.edu.cn/" class="link-button">官网</a>
+                    <a href="https://www.seafile.com/download/" class="link-button">客户端下载</a>
+                </div>
+            </div>
+            <div class="item-description">
+                湖师大校园云盘是学校免费提供的云存储服务，提供高速的上传下载速度，师生可以在这里存储文件。点此查看<a href="https://sxy.hunnu.edu.cn/info/1102/6615.htm" target="_blank">云盘使用指南</a>。
+            </div>
+        </div>
+        <div class="item-row">
+            <div class="item-header">
+                <div class="item-title">EDU邮箱</div>
+                <div class="item-links">
+                    <a href="http://mail.hunnu.edu.cn/" class="link-button">官网</a>
+                </div>
+            </div>
+            <div class="item-description">
+                湖师大邮箱是学校为师生提供edu邮箱服务，每位学生可注册一个邮箱账户及一个别名。
+            </div>
+        </div>
+        <div class="item-row">
+            <div class="item-header">
+                <div class="item-title">信息门户</div>
+                <div class="item-links">
+                    <a href="https://front.hunnu.edu.cn/applications" class="link-button">官网</a>
+                    <a href="https://e.hunnu.edu.cn/affairs" class="link-button">服务大厅</a>
+                </div>
+            </div>
+            <div class="item-description">
+                湖南师范大学信息门户隶属于湖南师范大学信息化中心，提供多种服务，如场馆预约、学生评教、正版软件下载等。
+            </div>
+        </div>
+        <div class="item-row">
+            <div class="item-header">
+                <div class="item-title">本科教学管理平台</div>
+                <div class="item-links">
+                    <a href="https://jwglnew.hunnu.edu.cn/" class="link-button">官网</a>
+                </div>
+            </div>
+            <div class="item-description">
+                本科教学管理平台是学校的教务管理系统，师生可以在这里查询课表、成绩、培养计划、报到、选课、打印CA成绩单等。点击此处进入<a href="https://jwglnew.hunnu.edu.cn/eams/stdElectCourse!innerIndex.action">选课快速通道</a>，可避免网络拥堵(需先至本科教学管理平台登录)。
+            </div>
+        </div>
+        <div class="item-row">
+            <div class="item-header">
+                <div class="item-title">在线教学平台</div>
+                <div class="item-links">
+                    <a href="https://hunnu.fanya.chaoxing.com/portal" class="link-button">官网</a>
+                </div>
+            </div>
+            <div class="item-description">
+                在线教学平台是学校的教学资源管理系统，师生可以在这里查看课程资料、提交作业、参与讨论等。
+            </div>
+        </div>
+        <div class="item-row">
+            <div class="item-header">
+                <div class="item-title">学信网</div>
+                <div class="item-links">
+                    <a href="https://www.chsi.com.cn/" class="link-button">官网</a>
+                </div>
+            </div>
+            <div class="item-description">
+                学信网是教育部学籍在线验证系统，学生可在学信网查询并下载学籍信息、学历信息、学籍证明等。
+            </div>
+        </div>
+    </div>
+
+    <!-- 学校热门论坛 -->
+    <div class="section">
+        <h2 class="section-title">学校热门论坛</h2>
+        <div class="item-row">
+            <div class="item-header">
+                <div class="item-title">师大论坛</div>
+                <div class="item-links">
+                    <a href="#" class="link-button">访问</a>
+                    <a href="#" class="link-button">简介</a>
+                </div>
+            </div>
+            <div class="item-description">
+                师大论坛是学校的热门交流平台，师生可以在这里讨论学术问题、分享学习经验。
+            </div>
+        </div>
+        <div class="item-row">
+            <div class="item-header">
+                <div class="item-title">青年师大</div>
+                <div class="item-links">
+                    <a href="#" class="link-button">访问</a>
+                    <a href="#" class="link-button">简介</a>
+                </div>
+            </div>
+            <div class="item-description">
+                青年师大是学校的青年学生组织，致力于服务青年学生的成长和发展。
+            </div>
+        </div>
+    </div>
+
+    <!-- 学校周边好店 -->
+    <div class="section">
+        <h2 class="section-title">学校周边好店</h2>
+        <div class="item-row">
+            <div class="item-header">
+                <div class="item-title">麓山南路美食街</div>
+                <div class="item-links">
+                    <a href="#" class="link-button">位置</a>
+                    <a href="#" class="link-button">推荐</a>
+                </div>
+            </div>
+            <div class="item-description">
+                麓山南路美食街是学校周边的热门美食聚集地，汇集了各类美食小吃。
+            </div>
+        </div>
+        <div class="item-row">
+            <div class="item-header">
+                <div class="item-title">天马美食城</div>
+                <div class="item-links">
+                    <a href="#" class="link-button">位置</a>
+                    <a href="#" class="link-button">推荐</a>
+                </div>
+            </div>
+            <div class="item-description">
+                天马美食城是学校周边的另一大美食聚集地，这里有各类餐饮店铺。
+            </div>
+        </div>
+    </div>
+
+    <!-- 校园通勤指南 -->
+    <div class="section">
+        <h2 class="section-title">校园通勤指南</h2>
+        <div class="item-row">
+            <div class="item-header">
+                <div class="item-title">麓山校区</div>
+                <div class="item-links">
+                    <a href="#" class="link-button">地图</a>
+                    <a href="#" class="link-button">公交</a>
+                    <a href="#" class="link-button">校车</a>
+                </div>
+            </div>
+            <div class="item-description">
+                麓山校区是学校的主校区，这里有丰富的教学资源和生活设施。
+            </div>
+        </div>
+        <div class="item-row">
+            <div class="item-header">
+                <div class="item-title">桃子湖校区</div>
+                <div class="item-links">
+                    <a href="#" class="link-button">地图</a>
+                    <a href="#" class="link-button">公交</a>
+                    <a href="#" class="link-button">校车</a>
+                </div>
+            </div>
+            <div class="item-description">
+                桃子湖校区是学校的另一个重要校区，可通过多种交通方式到达。
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.item-title').forEach(title => {
+            title.addEventListener('click', () => {
+                const description = title.parentElement.nextElementSibling;
+                const isActive = description.classList.contains('active');
+
+                // 关闭所有其他展开项
+                document.querySelectorAll('.item-description.active').forEach(activeDesc => {
+                    activeDesc.classList.remove('active');
+                });
+                document.querySelectorAll('.item-title.active').forEach(activeTitle => {
+                    activeTitle.classList.remove('active');
+                });
+
+                // 切换当前项
+                if (!isActive) {
+                    title.classList.add('active');
+                    description.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

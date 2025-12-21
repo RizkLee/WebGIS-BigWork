@@ -1,0 +1,57 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "hnnu-webgis-api",
+	"main": "src/index.ts",
+	"compatibility_date": "2025-12-17",
+	"observability": {
+		"enabled": true
+	},
+	/**
+	 * D1 Database Binding
+	 * 绑定D1数据库到Worker
+	 */
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "webgis-hnnu-database",
+			"database_id": "01c2c48c-62a1-4b2b-8abd-9182ba066bf5"
+		}
+	],
+	/**
+	 * R2 Bucket Binding
+	 * 绑定 R2 存储桶用于保存头像/评论图片
+	 * 注意：bucket_name 需要与你在 Cloudflare R2 中创建的桶名一致
+	 */
+	"r2_buckets": [
+		{
+			"binding": "R2",
+			"bucket_name": "webgis-hnnu-media"
+		}
+	],
+	/**
+	 * Environment Variables
+	 * CORS配置：允许的前端域名
+	 */
+	"vars": {
+		"ALLOWED_ORIGINS": "https://www.hunnu.dpdns.org,http://localhost:5173,http://localhost:5174,http://localhost:5175,https://webgis-api.playsomethingelse.dpdns.org"
+	}
+	/**
+	 * Smart Placement
+	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
+	 */
+	// "placement": {  "mode": "smart" }
+	/**
+	 * Static Assets
+	 * https://developers.cloudflare.com/workers/static-assets/binding/
+	 */
+	// "assets": {  "directory": "./public/",  "binding": "ASSETS" }
+	/**
+	 * Service Bindings (communicate between multiple Workers)
+	 * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
+	 */
+	// "services": [  {   "binding": "MY_SERVICE",   "service": "my-service"  } ]
+}

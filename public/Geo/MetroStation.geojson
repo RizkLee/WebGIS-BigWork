@@ -1,0 +1,18 @@
+{
+"type": "FeatureCollection",
+"name": "MetroStation",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"xy_coordinate_resolution": 1e-15,
+"features": [
+{ "type": "Feature", "properties": { "Id": 0, "站名": "六沟垅", "layer": "地铁站六号线" }, "geometry": { "type": "Point", "coordinates": [ 112.949326068040918, 28.223137898463282 ] } },
+{ "type": "Feature", "properties": { "Id": 0, "站名": "白鸽咀", "layer": "地铁站六号线" }, "geometry": { "type": "Point", "coordinates": [ 112.928458314033676, 28.221409917921672 ] } },
+{ "type": "Feature", "properties": { "Id": 0, "站名": "六沟垅", "layer": "地铁站四号线" }, "geometry": { "type": "Point", "coordinates": [ 112.949326068040918, 28.223137898463282 ] } },
+{ "type": "Feature", "properties": { "Id": 0, "站名": "黄土岭", "layer": "地铁站四号线" }, "geometry": { "type": "Point", "coordinates": [ 112.979992733968786, 28.163574935995698 ] } },
+{ "type": "Feature", "properties": { "Id": 0, "站名": "望月湖", "layer": "地铁站四号线" }, "geometry": { "type": "Point", "coordinates": [ 112.950124367205447, 28.210106246961782 ] } },
+{ "type": "Feature", "properties": { "Id": 0, "站名": "荣湾镇", "layer": "地铁站四号线" }, "geometry": { "type": "Point", "coordinates": [ 112.946615464025882, 28.200267046668387 ] } },
+{ "type": "Feature", "properties": { "Id": 0, "站名": "湖南师大", "layer": "地铁站四号线" }, "geometry": { "type": "Point", "coordinates": [ 112.942707129834943, 28.189452616466898 ] } },
+{ "type": "Feature", "properties": { "Id": 0, "站名": "湖南大学", "layer": "地铁站四号线" }, "geometry": { "type": "Point", "coordinates": [ 112.941342370966282, 28.183515731750429 ] } },
+{ "type": "Feature", "properties": { "Id": 0, "站名": "阜埠河", "layer": "地铁站四号线" }, "geometry": { "type": "Point", "coordinates": [ 112.942794873317212, 28.169101615013656 ] } },
+{ "type": "Feature", "properties": { "Id": 0, "站名": "碧沙湖", "layer": "地铁站四号线" }, "geometry": { "type": "Point", "coordinates": [ 112.962319639443749, 28.167802396408877 ] } }
+]
+}
