@@ -1,9 +1,26 @@
 <script setup lang="ts">
+import { onMounted, onUnmounted } from 'vue'
 import NavigationBar from './components/NavigationBar.vue'
 import MapView from './components/MapView.vue'
 import ContentSection from './components/ContentSection.vue'
 import SectionItem from './components/SectionItem.vue'
 import { sectionData } from './data/sections'
+
+const setAppVh = () => {
+  const height = window.visualViewport?.height ?? window.innerHeight
+  document.documentElement.style.setProperty('--app-vh', `${height}px`)
+}
+
+onMounted(() => {
+  setAppVh()
+  window.addEventListener('resize', setAppVh)
+  window.visualViewport?.addEventListener('resize', setAppVh)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', setAppVh)
+  window.visualViewport?.removeEventListener('resize', setAppVh)
+})
 </script>
 
 <template>
@@ -40,7 +57,8 @@ import { sectionData } from './data/sections'
 
 <style scoped>
 .main-content {
-  margin-top: 70px;
+  --nav-h: 70px;
+  margin-top: var(--nav-h);
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -49,7 +67,7 @@ import { sectionData } from './data/sections'
 
 .map-section {
   width: 100%;
-  height: calc(100vh - 70px);
+  height: calc(var(--app-vh, 100dvh) - var(--nav-h));
   display: flex;
   flex-direction: column;
   position: relative;
@@ -57,8 +75,8 @@ import { sectionData } from './data/sections'
 
 .scroll-hint {
   width: 100%;
-  height: 40px;
-  flex: 0 0 40px;
+  min-height: 40px;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -72,6 +90,8 @@ import { sectionData } from './data/sections'
   transition: all 0.3s ease;
   position: relative;
   z-index: 500;
+  padding-bottom: env(safe-area-inset-bottom);
+  box-sizing: border-box;
 }
 
 .scroll-hint:hover {
@@ -117,7 +137,7 @@ import { sectionData } from './data/sections'
 
 @media (max-width: 768px) {
   .main-content {
-    margin-top: 70px;
+    --nav-h: 60px;
   }
 
   .main-title {

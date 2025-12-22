@@ -19,7 +19,7 @@ body {
   flex-direction: column;
   align-items: center;
   position: relative;
-  min-height: 100vh;
+  min-height: var(--app-vh, 100dvh);
 }
 
 /* 背景图片层 */

@@ -100,17 +100,19 @@ const toggleMenu = () => {
 }
 
 .nav-center {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 15px;
+  justify-content: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 12px;
+  padding: 0 12px;
 }
 
 .nav-logo {
   height: 45px;
   width: auto;
+  flex: 0 0 auto;
 }
 
 .nav-title {
@@ -119,13 +121,19 @@ const toggleMenu = () => {
   font-weight: 600;
   color: #8F0100;
   margin: 0;
+  flex: 0 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .nav-right {
-  min-width: 120px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  flex: 0 0 auto;
+  min-width: 0;
 }
 
 /* 侧边菜单 */
@@ -239,12 +247,21 @@ const toggleMenu = () => {
     padding: 0 20px;
   }
 
+  .nav-center {
+    gap: 8px;
+    padding: 0 8px;
+  }
+
   .nav-logo {
     height: 35px;
   }
 
   .nav-title {
     font-size: 20px;
+  }
+
+  .nav-right {
+    max-width: 140px;
   }
 
   .sidebar {

@@ -1,7 +1,11 @@
 // API配置
-export const API_BASE_URL = import.meta.env.PROD 
-  ? 'https://webgis-api.playsomethingelse.dpdns.org' // 部署后替换为实际的Worker URL
-  : 'http://localhost:8787'
+// 生产环境（Cloudflare Pages）请通过环境变量注入：VITE_API_BASE_URL
+// - 例如：https://your-worker.your-subdomain.workers.dev
+// 本地开发默认走 wrangler dev：http://localhost:8787
+export const API_BASE_URL = (
+  (import.meta.env.VITE_API_BASE_URL as string | undefined) ||
+  (import.meta.env.PROD ? '' : 'http://localhost:8787')
+).replace(/\/$/, '')
 
 // API客户端
 class APIClient {

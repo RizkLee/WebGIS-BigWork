@@ -184,8 +184,14 @@ const BUILDING_TYPE_ICONS: Record<string, string> = {
 }
 
 onMounted(async () => {
-  // 设置Mapbox访问令牌
-  mapboxgl.accessToken = 'pk.eyJ1IjoiOTkxMTg0NTU3IiwiYSI6ImNrbzhidmR6YzE2ZjMyb3FuM3NvY2VxbWgifQ.f9is-WlgcMeC41ZrNfrZhg'
+  // 设置 Mapbox 访问令牌（通过 Cloudflare Pages 环境变量注入）
+  // 本地可在 .env.local 中配置：VITE_MAPBOX_ACCESS_TOKEN=...
+  const mapboxToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN as string | undefined
+  if (!mapboxToken) {
+    alert('未配置地图访问令牌：请设置环境变量 VITE_MAPBOX_ACCESS_TOKEN 后重新部署/刷新。')
+    return
+  }
+  mapboxgl.accessToken = mapboxToken
 
   // 初始化地图
   map = new mapboxgl.Map({
@@ -235,12 +241,26 @@ const getMyLocation = (): Promise<{ lng: number; lat: number }> => {
       reject(new Error('当前浏览器不支持定位'))
       return
     }
+    if (!window.isSecureContext) {
+      reject(new Error('当前页面不是 HTTPS 环境，浏览器可能会阻止定位。请使用 https 访问后再试。'))
+      return
+    }
+
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         resolve({ lng: pos.coords.longitude, lat: pos.coords.latitude })
       },
       (err) => {
-        reject(new Error(err.message || '定位失败'))
+        // 1: PERMISSION_DENIED, 2: POSITION_UNAVAILABLE, 3: TIMEOUT
+        if (err?.code === 1) {
+          reject(new Error('定位权限已被拒绝。请在浏览器的站点设置中把“位置/定位”改为允许，然后刷新页面再试。'))
+          return
+        }
+        if (err?.code === 3) {
+          reject(new Error('定位超时，请到室外或网络更好处重试。'))
+          return
+        }
+        reject(new Error(err?.message || '定位失败'))
       },
       {
         enableHighAccuracy: true,
@@ -1029,7 +1049,7 @@ onUnmounted(() => {
 .map-actions {
   position: absolute;
   left: 12px;
-  bottom: 20px;
+  bottom: calc(20px + env(safe-area-inset-bottom));
   z-index: 10;
   display: flex;
   flex-direction: column;
