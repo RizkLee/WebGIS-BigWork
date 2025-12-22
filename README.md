@@ -64,6 +64,9 @@ public/
 ## 📖 开发文档
 
 - [📋 开发指南.md](./开发指南.md) - 如何添加内容和修改样式
+- [🚀 CLOUDFLARE_PAGES_DEPLOY.md](./CLOUDFLARE_PAGES_DEPLOY.md) - Cloudflare Pages 部署快速指南
+- [📦 DEPLOYMENT.md](./DEPLOYMENT.md) - 完整部署文档
+- [☁️ CLOUDFLARE_SETUP.md](./CLOUDFLARE_SETUP.md) - Cloudflare 服务配置
 - [🔄 MIGRATION.md](./MIGRATION.md) - 项目迁移说明和组件详解
 - [✅ 迁移完成总结.md](./迁移完成总结.md) - 完整的功能列表
 

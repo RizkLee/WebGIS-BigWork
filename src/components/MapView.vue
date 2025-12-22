@@ -240,7 +240,8 @@ const getMyLocation = (): Promise<{ lng: number; lat: number }> => {
         resolve({ lng: pos.coords.longitude, lat: pos.coords.latitude })
       },
       (err) => {
-        reject(new Error(err.message || '定位失败'))
+        // GeolocationPositionError codes: 1=PERMISSION_DENIED, 2=POSITION_UNAVAILABLE, 3=TIMEOUT
+        reject(err)
       },
       {
         enableHighAccuracy: true,
@@ -249,6 +250,11 @@ const getMyLocation = (): Promise<{ lng: number; lat: number }> => {
       }
     )
   })
+}
+
+const isGeolocationPermissionDenied = (error: any): boolean => {
+  // GeolocationPositionError.PERMISSION_DENIED = 1
+  return error?.code === 1
 }
 
 const locateMe = async () => {
@@ -279,7 +285,11 @@ const locateMe = async () => {
       bearing: 0,
     } as any)
   } catch (e: any) {
-    alert(e?.message || '定位失败')
+    if (isGeolocationPermissionDenied(e)) {
+      alert('定位权限被拒绝\n\n请在浏览器设置中允许本网站访问位置信息，然后刷新页面重试。')
+    } else {
+      alert(e?.message || '定位失败')
+    }
   }
 }
 
@@ -301,7 +311,11 @@ const startCheckin = async () => {
       checkinFileInput.value?.click()
     }
   } catch (e: any) {
-    alert(e?.message || '定位失败')
+    if (isGeolocationPermissionDenied(e)) {
+      alert('定位权限被拒绝\n\n打卡功能需要获取您的位置。请在浏览器设置中允许本网站访问位置信息，然后刷新页面重试。')
+    } else {
+      alert(e?.message || '定位失败')
+    }
   }
 }
 
@@ -1198,6 +1212,56 @@ onUnmounted(() => {
 @media (max-width: 768px) {
   .map {
     height: 100%;
+  }
+
+  .campus-controls {
+    top: 8px;
+    left: 8px;
+  }
+
+  .campus-btn {
+    height: 36px;
+    width: 40px;
+    padding: 5px 8px;
+  }
+
+  .campus-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .campus-btn:hover {
+    width: 130px;
+  }
+
+  .map-actions {
+    left: 8px;
+    /* Position above scroll hint (35px height) + 15px margin */
+    bottom: 50px;
+    gap: 8px;
+  }
+
+  .map-action-btn {
+    height: 36px;
+    width: 40px;
+    padding: 5px 8px;
+  }
+
+  .map-action-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .map-action-btn:hover {
+    width: 110px;
+  }
+
+  .checkin-modal {
+    padding: 16px;
+  }
+
+  .checkin-preview {
+    height: 180px;
   }
 }
 </style>
