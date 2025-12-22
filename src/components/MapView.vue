@@ -240,7 +240,8 @@ const getMyLocation = (): Promise<{ lng: number; lat: number }> => {
         resolve({ lng: pos.coords.longitude, lat: pos.coords.latitude })
       },
       (err) => {
-        reject(new Error(err.message || '定位失败'))
+        // GeolocationPositionError codes: 1=PERMISSION_DENIED, 2=POSITION_UNAVAILABLE, 3=TIMEOUT
+        reject(err)
       },
       {
         enableHighAccuracy: true,
@@ -249,6 +250,12 @@ const getMyLocation = (): Promise<{ lng: number; lat: number }> => {
       }
     )
   })
+}
+
+const isGeolocationPermissionDenied = (error: any): boolean => {
+  // Check for permission denied error
+  // GeolocationPositionError.PERMISSION_DENIED = 1
+  return error?.code === 1 || error?.message?.toLowerCase().includes('denied')
 }
 
 const locateMe = async () => {
@@ -279,11 +286,10 @@ const locateMe = async () => {
       bearing: 0,
     } as any)
   } catch (e: any) {
-    const msg = e?.message || '定位失败'
-    if (msg.includes('denied') || msg.includes('Geolocation')) {
+    if (isGeolocationPermissionDenied(e)) {
       alert('定位权限被拒绝\n\n请在浏览器设置中允许本网站访问位置信息，然后刷新页面重试。')
     } else {
-      alert(msg)
+      alert(e?.message || '定位失败')
     }
   }
 }
@@ -306,11 +312,10 @@ const startCheckin = async () => {
       checkinFileInput.value?.click()
     }
   } catch (e: any) {
-    const msg = e?.message || '定位失败'
-    if (msg.includes('denied') || msg.includes('Geolocation')) {
+    if (isGeolocationPermissionDenied(e)) {
       alert('定位权限被拒绝\n\n打卡功能需要获取您的位置。请在浏览器设置中允许本网站访问位置信息，然后刷新页面重试。')
     } else {
-      alert(msg)
+      alert(e?.message || '定位失败')
     }
   }
 }
