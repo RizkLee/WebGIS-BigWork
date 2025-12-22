@@ -279,7 +279,12 @@ const locateMe = async () => {
       bearing: 0,
     } as any)
   } catch (e: any) {
-    alert(e?.message || '定位失败')
+    const msg = e?.message || '定位失败'
+    if (msg.includes('denied') || msg.includes('Geolocation')) {
+      alert('定位权限被拒绝\n\n请在浏览器设置中允许本网站访问位置信息，然后刷新页面重试。')
+    } else {
+      alert(msg)
+    }
   }
 }
 
@@ -301,7 +306,12 @@ const startCheckin = async () => {
       checkinFileInput.value?.click()
     }
   } catch (e: any) {
-    alert(e?.message || '定位失败')
+    const msg = e?.message || '定位失败'
+    if (msg.includes('denied') || msg.includes('Geolocation')) {
+      alert('定位权限被拒绝\n\n打卡功能需要获取您的位置。请在浏览器设置中允许本网站访问位置信息，然后刷新页面重试。')
+    } else {
+      alert(msg)
+    }
   }
 }
 
@@ -1198,6 +1208,55 @@ onUnmounted(() => {
 @media (max-width: 768px) {
   .map {
     height: 100%;
+  }
+
+  .campus-controls {
+    top: 8px;
+    left: 8px;
+  }
+
+  .campus-btn {
+    height: 36px;
+    width: 40px;
+    padding: 5px 8px;
+  }
+
+  .campus-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .campus-btn:hover {
+    width: 130px;
+  }
+
+  .map-actions {
+    left: 8px;
+    bottom: 50px;
+    gap: 8px;
+  }
+
+  .map-action-btn {
+    height: 36px;
+    width: 40px;
+    padding: 5px 8px;
+  }
+
+  .map-action-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .map-action-btn:hover {
+    width: 110px;
+  }
+
+  .checkin-modal {
+    padding: 16px;
+  }
+
+  .checkin-preview {
+    height: 180px;
   }
 }
 </style>

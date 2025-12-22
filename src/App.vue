@@ -117,11 +117,21 @@ import { sectionData } from './data/sections'
 
 @media (max-width: 768px) {
   .main-content {
-    margin-top: 70px;
+    margin-top: 60px;
+  }
+
+  .map-section {
+    height: calc(100vh - 60px);
   }
 
   .main-title {
     font-size: 24px;
+  }
+
+  .scroll-hint {
+    font-size: 12px;
+    height: 35px;
+    flex: 0 0 35px;
   }
 }
 </style>

@@ -236,19 +236,50 @@ const toggleMenu = () => {
 @media (max-width: 768px) {
   .navbar {
     height: 60px;
-    padding: 0 20px;
+    padding: 0 15px;
+  }
+
+  .nav-center {
+    gap: 8px;
   }
 
   .nav-logo {
-    height: 35px;
+    height: 28px;
   }
 
   .nav-title {
-    font-size: 20px;
+    font-size: 16px;
   }
 
   .sidebar {
     width: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 10px;
+  }
+
+  .nav-center {
+    gap: 6px;
+  }
+
+  .nav-logo {
+    height: 24px;
+  }
+
+  .nav-title {
+    font-size: 14px;
+  }
+
+  .menu-button {
+    min-width: 40px;
+    padding: 8px;
+  }
+
+  .nav-right {
+    min-width: 100px;
   }
 }
 </style>
