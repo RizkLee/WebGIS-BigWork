@@ -253,9 +253,8 @@ const getMyLocation = (): Promise<{ lng: number; lat: number }> => {
 }
 
 const isGeolocationPermissionDenied = (error: any): boolean => {
-  // Check for permission denied error
   // GeolocationPositionError.PERMISSION_DENIED = 1
-  return error?.code === 1 || error?.message?.toLowerCase().includes('denied')
+  return error?.code === 1
 }
 
 const locateMe = async () => {
@@ -1237,6 +1236,7 @@ onUnmounted(() => {
 
   .map-actions {
     left: 8px;
+    /* Position above scroll hint (35px height) + 15px margin */
     bottom: 50px;
     gap: 8px;
   }
