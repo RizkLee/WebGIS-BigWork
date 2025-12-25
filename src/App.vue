@@ -84,7 +84,7 @@ onUnmounted(() => {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
   font-family: 'Source Han Serif CN', serif;
-  color: #8F0100;
+  color: #8F0100;         /* #8F0100 */
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;

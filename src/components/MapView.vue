@@ -18,9 +18,16 @@
       </button>
     </div>
 
+    <TransportGuide
+      :campuses="campuses"
+      :busFeatures="busFeatures"
+      :metroFeatures="metroFeatures"
+      :metroStations="metroStations"
+    />
+
     <div class="map-actions">
       <button
-        class="map-action-btn"
+        class="map-action-btn locate-btn"
         type="button"
         @click="locateMe"
         title="定位"
@@ -114,7 +121,9 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import { POI_CATEGORIES, type POIFeature, type POICollection } from '../config/poiConfig'
 import POIPopup from './POIPopup.vue'
 import CheckinPopup from './CheckinPopup.vue'
+import TransportGuide from './TransportGuide.vue'
 import { apiClient, API_BASE_URL } from '../api/client'
+import type { BusFeatureProps, MetroFeatureProps, MetroStationFeature } from '../types/transport'
 
 let map: mapboxgl.Map | null = null
 const selectedPOI = ref<POIFeature | null>(null)
@@ -170,6 +179,176 @@ type CampusButton = {
 }
 
 const campuses = ref<CampusButton[]>([])
+const busFeatures = ref<BusFeatureProps[]>([])
+const metroFeatures = ref<MetroFeatureProps[]>([])
+const metroStations = ref<MetroStationFeature[]>([])
+
+const transportBusGeoJSON = ref<any | null>(null)
+const transportMetroGeoJSON = ref<any | null>(null)
+const transportMetroStationGeoJSON = ref<any | null>(null)
+
+const loadTransportData = async () => {
+  try {
+    const [busRes, metroRes, stationRes] = await Promise.all([
+      fetch('/Geo/Bus.geojson'),
+      fetch('/Geo/Metro.geojson'),
+      fetch('/Geo/MetroStation.geojson'),
+    ])
+
+    if (busRes.ok) {
+      const busData = await busRes.json() as any
+      transportBusGeoJSON.value = busData
+      busFeatures.value = (busData?.features || []).map((f: any) => f?.properties || {}).filter(Boolean)
+    }
+    if (metroRes.ok) {
+      const metroData = await metroRes.json() as any
+      transportMetroGeoJSON.value = metroData
+      metroFeatures.value = (metroData?.features || []).map((f: any) => f?.properties || {}).filter(Boolean)
+    }
+    if (stationRes.ok) {
+      const stationData = await stationRes.json() as any
+      transportMetroStationGeoJSON.value = stationData
+      const next: MetroStationFeature[] = []
+      for (const f of (stationData?.features || []) as any[]) {
+        const name = String(f?.properties?.['站名'] || '').trim()
+        const layer = String(f?.properties?.['layer'] || '').trim()
+        const coords = f?.geometry?.coordinates
+        if (!name || !layer || !Array.isArray(coords)) continue
+        const lng = Number(coords?.[0])
+        const lat = Number(coords?.[1])
+        if (!Number.isFinite(lng) || !Number.isFinite(lat)) continue
+        // layer: "地铁站四号线" / "地铁站六号线"
+        const line = layer.replace('地铁站', '')
+        next.push({ name, line, lng, lat })
+      }
+      metroStations.value = next
+    }
+  } catch (e) {
+    console.error('加载交通数据失败:', e)
+  }
+}
+
+const ensureTransportIcon = async () => {
+  if (!map) return
+  const imageId = 'metro-station-icon'
+  if (map.hasImage(imageId)) return
+  const url = '/Icons_POI/Changsha_Metro_logo.svg'
+
+  try {
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve()
+      img.onerror = () => reject(new Error('地铁站 SVG 图标加载失败'))
+      img.src = url
+    })
+
+    if (!map || map.hasImage(imageId)) return
+    map.addImage(imageId, img as any, { pixelRatio: 2 })
+  } catch (e) {
+    console.warn('加载地铁站图标失败:', e)
+  }
+}
+
+const upsertGeoJSONSource = (id: string, data: any) => {
+  if (!map) return
+  const existing = map.getSource(id) as any
+  if (existing && typeof existing.setData === 'function') {
+    existing.setData(data)
+    return
+  }
+  if (!existing) {
+    map.addSource(id, {
+      type: 'geojson',
+      data: data as any,
+    })
+  }
+}
+
+const setupTransportLayers = async () => {
+  if (!map) return
+  await ensureTransportIcon()
+
+  const busData = transportBusGeoJSON.value
+  const metroData = transportMetroGeoJSON.value
+  const stationData = transportMetroStationGeoJSON.value
+
+  if (busData) upsertGeoJSONSource('transport-bus', busData)
+  if (metroData) upsertGeoJSONSource('transport-metro', metroData)
+  if (stationData) upsertGeoJSONSource('transport-metro-stations', stationData)
+
+  // 公交线路（主题色，透明度 60%）
+  if (busData && !map.getLayer('transport-bus-lines')) {
+    map.addLayer({
+      id: 'transport-bus-lines',
+      type: 'line',
+      source: 'transport-bus',
+      layout: {
+        'line-join': 'round',
+        'line-cap': 'round',
+      },
+      paint: {
+        'line-color': '#F58686',
+        'line-opacity': 0.6,
+        'line-width': 2,
+      },
+    })
+  }
+
+  // 地铁线路（稍粗，按 4/6 号线着色，透明度 50%）
+  if (metroData && !map.getLayer('transport-metro-lines')) {
+    map.addLayer({
+      id: 'transport-metro-lines',
+      type: 'line',
+      source: 'transport-metro',
+      layout: {
+        'line-join': 'round',
+        'line-cap': 'round',
+      },
+      paint: {
+        'line-color': [
+          'match',
+          ['get', '名称'],
+          '4号线',
+          '#974396',
+          '6号线',
+          '#333EBC',
+          '#333EBC',
+        ],
+        'line-opacity': 0.5,
+        'line-width': 3,
+      },
+    })
+  }
+
+  // 地铁站点（使用 SVG 图标；优先级低于普通 POI：由于本层在 POI 图层之前添加，POI 会覆盖/抢占碰撞）
+  if (stationData && !map.getLayer('transport-metro-stations-symbols')) {
+    map.addLayer({
+      id: 'transport-metro-stations-symbols',
+      type: 'symbol',
+      source: 'transport-metro-stations',
+      layout: {
+        'icon-image': 'metro-station-icon',
+        'icon-size': [
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          13,
+          0.09,
+          16,
+          0.13,
+          18,
+          0.16,
+        ],
+        'icon-allow-overlap': false,
+        'icon-ignore-placement': false,
+      },
+      paint: {
+        'icon-opacity': 0.95,
+      },
+    })
+  }
+}
 
 // 建筑类型到图标的映射
 const BUILDING_TYPE_ICONS: Record<string, string> = {
@@ -229,6 +408,8 @@ onMounted(async () => {
     console.log('地图加载完成')
     await loadCampusData()
     await loadBuildingsData()
+    await loadTransportData()
+    await setupTransportLayers()
     await loadPOIData()
     await loadCheckinsData()
     setupGlobalInteractions()
@@ -1059,6 +1240,7 @@ onUnmounted(() => {
   opacity: 1;
 }
 
+
 .map-actions {
   position: absolute;
   left: 12px;
@@ -1085,6 +1267,14 @@ onUnmounted(() => {
   cursor: pointer;
   border-radius: 12px;
   transition: width 200ms ease, background-color 200ms ease;
+}
+
+.map-action-btn.locate-btn {
+  color: #1238A9;
+}
+
+.map-action-btn.locate-btn:hover {
+  color: #1238A9;
 }
 
 .map-action-btn:hover {
