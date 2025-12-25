@@ -403,12 +403,20 @@ const setupGlobalInteractions = () => {
     interactiveLayers.push(`poi-dots-${key}`)
   })
 
+  const getExistingInteractiveLayers = () => {
+    const m = map
+    if (!m) return [] as string[]
+    return interactiveLayers.filter(id => !!m.getLayer(id))
+  }
+
   // 全局点击事件监听
   map.on('click', (e) => {
     if (!map) return
     
     // 查询点击位置的所有交互图层要素
-    const features = map.queryRenderedFeatures(e.point, { layers: interactiveLayers })
+    const layers = getExistingInteractiveLayers()
+    if (!layers.length) return
+    const features = map.queryRenderedFeatures(e.point, { layers })
     
     if (features.length > 0) {
       const feature = features[0]
@@ -450,7 +458,12 @@ const setupGlobalInteractions = () => {
   // 全局鼠标移动事件监听（改变光标）
   map.on('mousemove', (e) => {
     if (!map) return
-    const features = map.queryRenderedFeatures(e.point, { layers: interactiveLayers })
+    const layers = getExistingInteractiveLayers()
+    if (!layers.length) {
+      map.getCanvas().style.cursor = ''
+      return
+    }
+    const features = map.queryRenderedFeatures(e.point, { layers })
     map.getCanvas().style.cursor = features.length ? 'pointer' : ''
   })
 }

@@ -19,6 +19,10 @@ class APIClient {
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
+    if (import.meta.env.PROD && !this.baseURL) {
+      throw new Error('未配置 VITE_API_BASE_URL：当前在生产环境中无法访问后端 API。请在 Cloudflare Pages 的环境变量中设置后重新部署。')
+    }
+
     const url = `${this.baseURL}${endpoint}`
 
     const headers = new Headers(options.headers)
@@ -28,17 +32,62 @@ class APIClient {
       headers.set('Content-Type', 'application/json')
     }
 
-    const response = await fetch(url, {
-      ...options,
-      headers,
-    })
-
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || '请求失败')
+    let response: Response
+    try {
+      response = await fetch(url, {
+        ...options,
+        headers,
+      })
+    } catch (e: any) {
+      throw new Error(`网络连接失败：${e?.message || '无法连接到服务器'}（${url}）`)
     }
 
-    return response.json()
+    const contentType = response.headers.get('content-type') || ''
+    const rawText = await response.text().catch(() => '')
+    const text = (rawText || '').trim()
+
+    const looksLikeHtml = text.startsWith('<!doctype html') || text.startsWith('<html') || text.startsWith('<')
+    const looksLikeJson = text.startsWith('{') || text.startsWith('[')
+
+    const parseJson = () => {
+      if (!text) return undefined
+      return JSON.parse(text)
+    }
+
+    if (!response.ok) {
+      // 常见：API_BASE_URL 配错导致打到 Pages（返回 index.html），或被 WAF/代理返回 HTML
+      if (looksLikeHtml) {
+        throw new Error(
+          `API 返回了 HTML（不是 JSON）。通常是 VITE_API_BASE_URL 配置错误，或请求被拦截/重定向。` +
+          `\nURL: ${url}` +
+          `\nHTTP: ${response.status}`
+        )
+      }
+
+      if (looksLikeJson || contentType.includes('application/json')) {
+        const data: any = parseJson() || {}
+        throw new Error(data?.error || `请求失败（HTTP ${response.status}）`)
+      }
+
+      throw new Error(`请求失败（HTTP ${response.status}）：${text || '无响应内容'}\nURL: ${url}`)
+    }
+
+    // 兼容：极少数情况下响应可能为空（例如 204 或边缘异常）
+    if (!text) return undefined as T
+
+    if (looksLikeHtml) {
+      throw new Error(
+        `API 返回了 HTML（不是 JSON）。请检查 VITE_API_BASE_URL 是否指向 Worker，而不是 Pages 站点本身。` +
+        `\nURL: ${url}`
+      )
+    }
+
+    if (looksLikeJson || contentType.includes('application/json')) {
+      return parseJson() as T
+    }
+
+    // 兜底：返回纯文本
+    return text as unknown as T
   }
 
   // 用户注册
